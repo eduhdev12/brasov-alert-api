@@ -1,10 +1,49 @@
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi, { FastifySwaggerUiOptions } from "@fastify/swagger-ui";
 import { PrismaClient } from "@prisma/client";
 import consola from "consola";
 import fastify, { FastifyInstance } from "fastify";
 import http from "http";
 import { PORT } from "./config";
-import Controller from "./types/controller.type";
 import TestController from "./controllers/test.controller";
+import Controller from "./types/controller.type";
+
+export const swaggerOptions = {
+  swagger: {
+    info: {
+      title: "Brasov alert API",
+      description: "API Documentation",
+      version: "1.0.0",
+    },
+  },
+  exposeRoute: true,
+};
+
+export const swaggerUiOptions: FastifySwaggerUiOptions = {
+  routePrefix: "/docs",
+  uiConfig: {
+    docExpansion: "full",
+    deepLinking: false,
+  },
+  uiHooks: {
+    onRequest: function (request, reply, next) {
+      next();
+    },
+    preHandler: function (request, reply, next) {
+      next();
+    },
+  },
+  staticCSP: true,
+  transformStaticCSP: (header) => header,
+  transformSpecification: (swaggerObject, request, reply) => {
+    return swaggerObject;
+  },
+  transformSpecificationClone: true,
+  // logo: {
+  //   type: "image/png",
+  //   content: // INSERT CONTENT HERE
+  // },
+};
 
 export default class Server {
   private app: FastifyInstance;
@@ -37,7 +76,6 @@ export default class Server {
   }
 
   public loadControllers(controllers: Array<Controller>): void {
-    //Array<Controller>
     this.app.register((app, args, done) => {
       controllers.forEach((controller) => {
         global.logger.info("-----------------------------");
@@ -81,9 +119,10 @@ export const createServer = () => {
     });
   }
 
-  const controllers: Array<Controller> = [
-    new TestController(app),
-  ];
+  app.register(fastifySwagger, swaggerOptions);
+  app.register(fastifySwaggerUi, swaggerUiOptions);
+
+  const controllers: Array<Controller> = [new TestController(app)];
 
   // server.loadMiddleware([testMiddleware]);
   server.loadControllers(controllers);
