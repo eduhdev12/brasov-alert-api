@@ -3,6 +3,8 @@ import consola from "consola";
 import fastify, { FastifyInstance } from "fastify";
 import http from "http";
 import { PORT } from "./config";
+import Controller from "./types/controller.type";
+import TestController from "./controllers/test.controller";
 
 export default class Server {
   private app: FastifyInstance;
@@ -34,7 +36,7 @@ export default class Server {
     });
   }
 
-  public loadControllers(controllers: any[]): void {
+  public loadControllers(controllers: Array<Controller>): void {
     //Array<Controller>
     this.app.register((app, args, done) => {
       controllers.forEach((controller) => {
@@ -79,8 +81,12 @@ export const createServer = () => {
     });
   }
 
+  const controllers: Array<Controller> = [
+    new TestController(app),
+  ];
+
   // server.loadMiddleware([testMiddleware]);
-  // server.loadControllers(controllers);
+  server.loadControllers(controllers);
   const httpServer = server.run();
 
   return httpServer;
