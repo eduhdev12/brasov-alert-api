@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import consola from "consola";
 import fastify, { FastifyInstance } from "fastify";
 import http from "http";
@@ -15,10 +16,10 @@ export default class Server {
   public async run(): Promise<http.Server> {
     try {
       await this.app.listen({ port: this.port, host: "0.0.0.0" });
-      consola.success(`Fastify server running on port ${this.port}`);
+      global.logger.success(`Fastify server running on port ${this.port}`);
       return this.app.server;
     } catch (err) {
-      consola.error(err);
+      global.logger.error(err);
       process.exit(1);
     }
   }
@@ -37,10 +38,10 @@ export default class Server {
     //Array<Controller>
     this.app.register((app, args, done) => {
       controllers.forEach((controller) => {
-        consola.info("-----------------------------");
-        consola.info(`Registering ${controller.path} controller`);
+        global.logger.info("-----------------------------");
+        global.logger.info(`Registering ${controller.path} controller`);
         controller.setRoutes();
-        consola.info("-----------------------------");
+        global.logger.info("-----------------------------");
         done();
       });
     });
@@ -48,6 +49,11 @@ export default class Server {
 }
 
 export const createServer = () => {
+  const prisma = new PrismaClient();
+
+  global.logger = consola;
+  global.database = prisma;
+
   const app = fastify({
     ajv: {
       customOptions: { allErrors: true, logger: console },
@@ -66,7 +72,7 @@ export const createServer = () => {
         ip = request.headers["cf-connecting-ip"];
       }
 
-      consola.success(
+      global.logger.success(
         `Incoming Request: ${request.method} ${request.url} from IP: ${ip}`
       );
       done();

@@ -8,7 +8,12 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node-dev --respawn --transpile-only --poll ./src/index.ts"
+    "build:production": "rm -rf ./dist && yarn db:generate && yarn db:migrate:dev && yarn build",
+    "start": "node ./dist/index",
+    "dev": "ts-node-dev --respawn --transpile-only --poll ./src/index.ts",
+    "db:studio": "prisma studio",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:generate": "prisma generate"
   },
   "devDependencies": {
     "@types/node": "^20.10.3",
@@ -17,8 +22,10 @@
     "typescript": "^5.3.2"
   },
   "dependencies": {
+    "@prisma/client": "^5.6.0",
     "consola": "^3.2.3",
     "dotenv": "^16.3.1",
-    "fastify": "^4.24.3"
+    "fastify": "^4.24.3",
+    "prisma": "^5.6.0"
   }
 }
