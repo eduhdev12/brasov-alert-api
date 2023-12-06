@@ -1,0 +1,24 @@
+{
+  "name": "brasov-alert-api",
+  "version": "1.0.0",
+  "description": "API pentru o aplicatie de gestiune a rapoartelor",
+  "main": "index.js",
+  "repository": "https://github.com/eduhdev12/brasov-alert-api.git",
+  "author": "Eduard A. <60825949+eduhdev12@users.noreply.github.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node-dev --respawn --transpile-only --poll ./src/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.3",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "consola": "^3.2.3",
+    "dotenv": "^16.3.1",
+    "fastify": "^4.24.3"
+  }
+}
