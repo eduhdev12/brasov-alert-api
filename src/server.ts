@@ -12,6 +12,7 @@ import { PORT } from "./config";
 import AuthController from "./controllers/auth.controller";
 import TestController from "./controllers/test.controller";
 import Controller from "./types/controller.type";
+import { IUser } from "./types/userJWT.type";
 
 export const swaggerOptions = {
   swagger: {
@@ -138,6 +139,15 @@ export const createServer = () => {
     async function (request: FastifyRequest, reply: FastifyReply) {
       try {
         await request.jwtVerify();
+
+        const token = request.headers.authorization?.split("Bearer ")?.[1];
+        const tokenData = await request.jwtDecode<IUser>();
+
+        const sessionData = await global.database.session.findFirst({
+          where: { token, userId: tokenData.id },
+        });
+
+        if (!sessionData) throw new Error("Invalid session");
       } catch (err) {
         reply.send(err);
       }
