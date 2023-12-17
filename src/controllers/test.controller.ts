@@ -10,19 +10,10 @@ export default class TestController extends Controller {
       handler: this.getAllUsers.bind(this),
     },
     {
-      path: "/",
-      method: Methods.POST,
-      handler: this.createUser.bind(this),
-    },
-    {
-      path: "/:id",
-      method: Methods.PUT,
-      handler: this.updateUser.bind(this),
-    },
-    {
-      path: "/:id",
-      method: Methods.DELETE,
-      handler: this.deleteUser.bind(this),
+      path: "/auth",
+      method: Methods.GET,
+      handler: this.checkAuth.bind(this),
+      onRequest: [global.server.app.authenticate],
     },
   ];
 
@@ -35,9 +26,7 @@ export default class TestController extends Controller {
     this.sendSuccess(reply, { users });
   }
 
-  private async createUser(req: FastifyRequest, reply: FastifyReply) {}
-
-  private async updateUser(req: FastifyRequest, reply: FastifyReply) {}
-
-  private async deleteUser(req: FastifyRequest, reply: FastifyReply) {}
+  private async checkAuth(req: FastifyRequest, reply: FastifyReply) {
+    return this.sendSuccess(reply, req.user);
+  }
 }

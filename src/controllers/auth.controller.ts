@@ -60,7 +60,18 @@ export default class AuthController extends Controller {
       return this.sendError(reply, "Password incorrect");
     }
 
-    return this.sendSuccess(reply, searchUser);
+    const tokenPayload = {
+      id: searchUser.id,
+      email: searchUser.email,
+    };
+
+    const token = global.server.app.jwt.sign({
+      id: searchUser.id,
+      email: searchUser.email,
+      name: `${searchUser.firstName} ${searchUser.lastName}`,
+    });
+
+    return this.sendSuccess(reply, { ...searchUser, token });
   }
 
   private async registerUser(

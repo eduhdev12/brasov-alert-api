@@ -9,8 +9,8 @@ import fastify, {
 } from "fastify";
 import http from "http";
 import { PORT } from "./config";
-import TestController from "./controllers/test.controller";
 import AuthController from "./controllers/auth.controller";
+import TestController from "./controllers/test.controller";
 import Controller from "./types/controller.type";
 
 export const swaggerOptions = {
@@ -51,7 +51,7 @@ export const swaggerUiOptions: FastifySwaggerUiOptions = {
 };
 
 export default class Server {
-  private app: FastifyInstance;
+  app: FastifyInstance;
   private readonly port: number;
 
   constructor(app: FastifyInstance, port: number) {
@@ -106,6 +106,8 @@ export const createServer = () => {
   });
   const server = new Server(app, PORT);
 
+  global.server = server;
+
   if (process.env.TS_NODE_DEV) {
     app.addHook("onRequest", (request, reply, done) => {
       let ip =
@@ -130,7 +132,6 @@ export const createServer = () => {
     secret: "supersecret",
   });
   app.register(require("@fastify/auth"), { defaultRelation: "and" });
-
 
   app.decorate(
     "authenticate",
