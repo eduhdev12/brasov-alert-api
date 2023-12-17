@@ -29,6 +29,28 @@ export interface IRoute {
   schema?: FastifySchema;
 }
 
+export interface IError {
+  message?: string;
+  error: string;
+  statusCode: number;
+}
+
+export const ErrorResponse = {
+  type: "object",
+  properties: {
+    message: {
+      type: "string",
+    },
+    error: {
+      type: "string",
+    },
+    statusCode: {
+      type: "number",
+    },
+  },
+  required: ["message", "statusCode"],
+};
+
 export default abstract class Controller {
   public router: FastifyInstance;
   public abstract path: string;

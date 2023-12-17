@@ -2,10 +2,15 @@ import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi, { FastifySwaggerUiOptions } from "@fastify/swagger-ui";
 import { PrismaClient } from "@prisma/client";
 import consola from "consola";
-import fastify, { FastifyInstance } from "fastify";
+import fastify, {
+  FastifyInstance,
+  FastifyReply,
+  FastifyRequest,
+} from "fastify";
 import http from "http";
 import { PORT } from "./config";
 import TestController from "./controllers/test.controller";
+import AuthController from "./controllers/auth.controller";
 import Controller from "./types/controller.type";
 
 export const swaggerOptions = {
@@ -121,8 +126,27 @@ export const createServer = () => {
 
   app.register(fastifySwagger, swaggerOptions);
   app.register(fastifySwaggerUi, swaggerUiOptions);
+  app.register(require("@fastify/jwt"), {
+    secret: "supersecret",
+  });
+  app.register(require("@fastify/auth"), { defaultRelation: "and" });
 
-  const controllers: Array<Controller> = [new TestController(app)];
+
+  app.decorate(
+    "authenticate",
+    async function (request: FastifyRequest, reply: FastifyReply) {
+      try {
+        await request.jwtVerify();
+      } catch (err) {
+        reply.send(err);
+      }
+    }
+  );
+
+  const controllers: Array<Controller> = [
+    new TestController(app),
+    new AuthController(app),
+  ];
 
   // server.loadMiddleware([testMiddleware]);
   server.loadControllers(controllers);

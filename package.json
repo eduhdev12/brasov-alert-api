@@ -16,15 +16,19 @@
     "db:generate": "prisma generate"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.10.3",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.2"
   },
   "dependencies": {
+    "@fastify/auth": "^4.4.0",
+    "@fastify/jwt": "^7.2.4",
     "@fastify/swagger": "^8.12.1",
     "@fastify/swagger-ui": "^2.0.1",
     "@prisma/client": "^5.6.0",
+    "bcrypt": "^5.1.1",
     "consola": "^3.2.3",
     "dotenv": "^16.3.1",
     "fastify": "^4.24.3",
