@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { AuthorizedRoute } from "../dto/auth.dto";
 import Controller, { Methods } from "../types/controller.type";
 
 export default class TestController extends Controller {
@@ -14,6 +15,7 @@ export default class TestController extends Controller {
       method: Methods.GET,
       handler: this.checkAuth.bind(this),
       onRequest: [global.server.app.authenticate],
+      schema: { ...AuthorizedRoute },
     },
   ];
 

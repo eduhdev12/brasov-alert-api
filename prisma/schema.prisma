@@ -19,6 +19,8 @@ model User {
   email    String @unique
   password String
 
+  Localitate Localitate?
+
   sessions Session[]
 
   createdAt DateTime @default(now())
@@ -37,4 +39,27 @@ model Session {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Localitate {
+  BRASOV
+  CODLEA
+  FAGARAS
+  SACELE
+  RASNOV
+  ZARNESTI
+  GHIMBAV
+  PREDEAL
+  RUPEA
+  VICTORIA
+  SERCAIA
+  HALCHIU
+  VULCAN
+  BOD
+  CRISTIAN
+  TARLUNGENI
+  HOMOROD
+  HARMAN
+  COMANA
+  LISA
 }

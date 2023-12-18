@@ -11,3 +11,13 @@ export interface RegisterBody {
   password: string;
   confirmPassword: string;
 }
+
+export const AuthorizedRoute = {
+  headers: {
+    type: "object",
+    properties: {
+      Authorization: { type: "string" },
+    },
+    required: ["Authorization"],
+  },
+};
