@@ -162,7 +162,7 @@ export const createServer = () => {
   );
 
   const controllers: Array<Controller> = [
-    new TestController(app),
+    // new TestController(app),
     new AuthController(app),
   ];
 
