@@ -19,6 +19,47 @@ model User {
   email    String @unique
   password String
 
+  localitate Localitate?
+
+  sessions Session[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Session {
+  id String @id @default(uuid())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  token String
+
+  expire DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Localitate {
+  BRASOV
+  CODLEA
+  FAGARAS
+  SACELE
+  RASNOV
+  ZARNESTI
+  GHIMBAV
+  PREDEAL
+  RUPEA
+  VICTORIA
+  SERCAIA
+  HALCHIU
+  VULCAN
+  BOD
+  CRISTIAN
+  TARLUNGENI
+  HOMOROD
+  HARMAN
+  COMANA
+  LISA
 }

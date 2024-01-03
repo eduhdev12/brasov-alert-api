@@ -1,0 +1,5 @@
+-- CreateEnum
+CREATE TYPE "Localitate" AS ENUM ('BRASOV', 'CODLEA', 'FAGARAS', 'SACELE', 'RASNOV', 'ZARNESTI', 'GHIMBAV', 'PREDEAL', 'RUPEA', 'VICTORIA', 'SERCAIA', 'HALCHIU', 'VULCAN', 'BOD', 'CRISTIAN', 'TARLUNGENI', 'HOMOROD', 'HARMAN', 'COMANA', 'LISA');
+
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "Localitate" "Localitate";

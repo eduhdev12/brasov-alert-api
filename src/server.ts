@@ -2,11 +2,18 @@ import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi, { FastifySwaggerUiOptions } from "@fastify/swagger-ui";
 import { PrismaClient } from "@prisma/client";
 import consola from "consola";
-import fastify, { FastifyInstance } from "fastify";
+import fastify, {
+  FastifyInstance,
+  FastifyReply,
+  FastifyRequest,
+} from "fastify";
 import http from "http";
 import { PORT } from "./config";
+import AuthController from "./controllers/auth.controller";
 import TestController from "./controllers/test.controller";
 import Controller from "./types/controller.type";
+import { IUser } from "./types/userJWT.type";
+import { isAfter } from "date-fns";
 
 export const swaggerOptions = {
   swagger: {
@@ -46,7 +53,7 @@ export const swaggerUiOptions: FastifySwaggerUiOptions = {
 };
 
 export default class Server {
-  private app: FastifyInstance;
+  app: FastifyInstance;
   private readonly port: number;
 
   constructor(app: FastifyInstance, port: number) {
@@ -101,6 +108,8 @@ export const createServer = () => {
   });
   const server = new Server(app, PORT);
 
+  global.server = server;
+
   if (process.env.TS_NODE_DEV) {
     app.addHook("onRequest", (request, reply, done) => {
       let ip =
@@ -121,8 +130,41 @@ export const createServer = () => {
 
   app.register(fastifySwagger, swaggerOptions);
   app.register(fastifySwaggerUi, swaggerUiOptions);
+  app.register(require("@fastify/jwt"), {
+    secret: "supersecret",
+  });
+  app.register(require("@fastify/auth"), { defaultRelation: "and" });
 
-  const controllers: Array<Controller> = [new TestController(app)];
+  app.decorate(
+    "authenticate",
+    async function (request: FastifyRequest, reply: FastifyReply) {
+      try {
+        await request.jwtVerify();
+
+        const token = request.headers.authorization?.split("Bearer ")?.[1];
+        const tokenData = await request.jwtDecode<IUser>();
+
+        const sessionData = await global.database.session.findFirst({
+          where: { token, userId: tokenData.id },
+        });
+
+        if (!sessionData) {
+          throw new Error("Invalid session");
+        }
+
+        if (sessionData.expire && isAfter(new Date(), sessionData.expire)) {
+          throw new Error("Session expired");
+        }
+      } catch (err) {
+        reply.send(err);
+      }
+    }
+  );
+
+  const controllers: Array<Controller> = [
+    // new TestController(app),
+    new AuthController(app),
+  ];
 
   // server.loadMiddleware([testMiddleware]);
   server.loadControllers(controllers);
