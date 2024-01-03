@@ -13,6 +13,7 @@ import AuthController from "./controllers/auth.controller";
 import TestController from "./controllers/test.controller";
 import Controller from "./types/controller.type";
 import { IUser } from "./types/userJWT.type";
+import { isAfter } from "date-fns";
 
 export const swaggerOptions = {
   swagger: {
@@ -147,7 +148,13 @@ export const createServer = () => {
           where: { token, userId: tokenData.id },
         });
 
-        if (!sessionData) throw new Error("Invalid session");
+        if (!sessionData) {
+          throw new Error("Invalid session");
+        }
+
+        if (sessionData.expire && isAfter(new Date(), sessionData.expire)) {
+          throw new Error("Session expired");
+        }
       } catch (err) {
         reply.send(err);
       }

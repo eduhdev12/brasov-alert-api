@@ -1,6 +1,11 @@
 import * as bcrypt from "bcrypt";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { LoginBody, RegisterBody } from "../dto/auth.dto";
+import {
+  LoginBody,
+  LoginResponse,
+  RegisterBody,
+  RegisterResponse,
+} from "../dto/auth.dto";
 import Controller, { ErrorResponse, Methods } from "../types/controller.type";
 
 export default class AuthController extends Controller {
@@ -10,24 +15,23 @@ export default class AuthController extends Controller {
       path: "/login",
       method: Methods.POST,
       handler: this.loginUser.bind(this),
+      schema: {
+        body: LoginBody,
+        response: {
+          200: LoginResponse,
+          401: ErrorResponse,
+        },
+      },
     },
     {
       path: "/register",
       method: Methods.POST,
       handler: this.registerUser.bind(this),
       schema: {
-        body: {
-          type: "object",
-          properties: {
-            email: { type: "string" },
-            password: { type: "string" },
-            confirmPassword: { type: "string" },
-          },
-          required: ["email", "password", "confirmPassword"],
-        },
+        body: RegisterBody,
         response: {
+          200: RegisterResponse,
           401: ErrorResponse,
-          //   200: {},
         },
       },
     },
@@ -70,8 +74,10 @@ export default class AuthController extends Controller {
       data: { token, user: { connect: { id: searchUser.id } } },
     });
 
+    const { password: userPassword, ...loginUserData } = searchUser;
+
     return this.sendSuccess(reply, {
-      ...searchUser,
+      ...loginUserData,
       token: newSession.token,
       sessionId: newSession.id,
     });
