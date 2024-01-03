@@ -16,6 +16,7 @@ export default class AuthController extends Controller {
       method: Methods.POST,
       handler: this.loginUser.bind(this),
       schema: {
+        tags: ["auth"],
         body: LoginBody,
         response: {
           200: LoginResponse,
@@ -28,6 +29,7 @@ export default class AuthController extends Controller {
       method: Methods.POST,
       handler: this.registerUser.bind(this),
       schema: {
+        tags: ["auth"],
         body: RegisterBody,
         response: {
           200: RegisterResponse,
