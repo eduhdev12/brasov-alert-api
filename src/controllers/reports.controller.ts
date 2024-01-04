@@ -73,6 +73,17 @@ export default class ReportsController extends Controller {
     },
     {
       path: "/:reportId",
+      method: Methods.PUT,
+      handler: this.solveReport.bind(this),
+      onRequest: [global.server.app.authenticate],
+      schema: {
+        tags: ["reports"],
+        response: { 200: TouchedReport, 500: ErrorResponse },
+        ...AuthorizedRoute,
+      },
+    },
+    {
+      path: "/:reportId",
       method: Methods.DELETE,
       handler: this.deleteReport.bind(this),
       onRequest: [global.server.app.authenticate],
@@ -157,6 +168,27 @@ export default class ReportsController extends Controller {
       return this.sendSuccess(reply, editedReport, "Edited report");
     } catch (editError) {
       return this.sendError(reply, `Unable to edit report ${reportId}`);
+    }
+  }
+
+  private async solveReport(
+    req: FastifyRequest<{ Params: { reportId: string } }>,
+    reply: FastifyReply
+  ) {
+    const { reportId } = req.params;
+
+    try {
+      const solvedReport = await global.database.report.update({
+        where: { id: reportId, resolved: false },
+        data: { resolved: true, resolvedBy: { connect: { id: req.user.id } } },
+      });
+
+      return this.sendSuccess(reply, solvedReport, "Solved report");
+    } catch (solveError) {
+      return this.sendError(
+        reply,
+        `Unable to solve report with id: ${reportId}`
+      );
     }
   }
 

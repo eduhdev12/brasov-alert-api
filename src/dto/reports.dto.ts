@@ -10,6 +10,7 @@ const LocationSchema = {
     images: { type: "array", items: { format: "binary" } },
     localitate: { type: "string" },
     authorId: { type: "number" },
+    resolvedById: { type: "number" },
     createdAt: { type: "string", format: "date" },
     updatedAt: { type: "string", format: "date" },
   },
