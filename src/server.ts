@@ -11,6 +11,7 @@ import http from "http";
 import { PORT } from "./config";
 import AuthController from "./controllers/auth.controller";
 import TestController from "./controllers/test.controller";
+import ReportsController from "./controllers/reports.controller";
 import Controller from "./types/controller.type";
 import { IUser } from "./types/userJWT.type";
 import { isAfter } from "date-fns";
@@ -164,6 +165,7 @@ export const createServer = () => {
   const controllers: Array<Controller> = [
     // new TestController(app),
     new AuthController(app),
+    new ReportsController(app),
   ];
 
   // server.loadMiddleware([testMiddleware]);

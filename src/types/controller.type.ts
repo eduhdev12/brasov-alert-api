@@ -10,6 +10,7 @@ import {
 export enum Methods {
   GET = "GET",
   POST = "POST",
+  PATCH = "PATCH",
   PUT = "PUT",
   DELETE = "DELETE",
 }
@@ -97,6 +98,7 @@ export default abstract class Controller {
   protected sendError(reply: FastifyReply, message?: string): FastifyReply {
     return reply.code(500).send({
       message: message || "internal server error",
+      statusCode: 500,
     });
   }
 }

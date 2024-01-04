@@ -20,7 +20,7 @@ export default class AuthController extends Controller {
         body: LoginBody,
         response: {
           200: LoginResponse,
-          401: ErrorResponse,
+          500: ErrorResponse,
         },
       },
     },
@@ -33,7 +33,7 @@ export default class AuthController extends Controller {
         body: RegisterBody,
         response: {
           200: RegisterResponse,
-          401: ErrorResponse,
+          500: ErrorResponse,
         },
       },
     },

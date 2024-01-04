@@ -10,6 +10,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Report {
+  id String @id @default(uuid())
+
+  name        String
+  description String?
+  images      String[]
+
+  resolved Boolean @default(false)
+
+  localitate Localitate
+
+  author   User @relation(fields: [authorId], references: [id])
+  authorId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model User {
   id Int @id @default(autoincrement())
 
@@ -20,6 +38,7 @@ model User {
   password String
 
   localitate Localitate?
+  reports    Report[]
 
   sessions Session[]
 
