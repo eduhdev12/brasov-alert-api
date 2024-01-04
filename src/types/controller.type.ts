@@ -1,15 +1,16 @@
 import consola from "consola";
 import {
-  FastifyInstance,
-  FastifyRequest,
-  FastifyReply,
   FastifyError,
+  FastifyInstance,
+  FastifyReply,
+  FastifyRequest,
   FastifySchema,
 } from "fastify";
 
 export enum Methods {
   GET = "GET",
   POST = "POST",
+  PATCH = "PATCH",
   PUT = "PUT",
   DELETE = "DELETE",
 }
@@ -22,6 +23,11 @@ export interface IRoute {
     reply: FastifyReply
   ) => void | Promise<void>;
   preHandler?: ((
+    req: FastifyRequest,
+    reply: FastifyReply,
+    done: (err?: FastifyError) => void
+  ) => void)[];
+  preValidation?: ((
     req: FastifyRequest,
     reply: FastifyReply,
     done: (err?: FastifyError) => void
@@ -66,6 +72,7 @@ export default abstract class Controller {
       const options = {
         url: this.path + route.path,
         method: route.method,
+        preValidation: route.preValidation,
         preHandler: route.preHandler,
         handler: route.handler,
         schema: route.schema,
@@ -97,6 +104,7 @@ export default abstract class Controller {
   protected sendError(reply: FastifyReply, message?: string): FastifyReply {
     return reply.code(500).send({
       message: message || "internal server error",
+      statusCode: 500,
     });
   }
 }

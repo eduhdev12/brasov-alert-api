@@ -10,10 +10,13 @@ import fastify, {
 import http from "http";
 import { PORT } from "./config";
 import AuthController from "./controllers/auth.controller";
-import TestController from "./controllers/test.controller";
+// import TestController from "./controllers/test.controller";
+import { isAfter } from "date-fns";
+import multer from "fastify-multer";
+import ReportsController from "./controllers/reports.controller";
+import UploadsController from "./controllers/uploads.controller";
 import Controller from "./types/controller.type";
 import { IUser } from "./types/userJWT.type";
-import { isAfter } from "date-fns";
 
 export const swaggerOptions = {
   swagger: {
@@ -134,6 +137,7 @@ export const createServer = () => {
     secret: "supersecret",
   });
   app.register(require("@fastify/auth"), { defaultRelation: "and" });
+  app.register(multer.contentParser);
 
   app.decorate(
     "authenticate",
@@ -164,6 +168,8 @@ export const createServer = () => {
   const controllers: Array<Controller> = [
     // new TestController(app),
     new AuthController(app),
+    new ReportsController(app),
+    new UploadsController(app),
   ];
 
   // server.loadMiddleware([testMiddleware]);

@@ -47,7 +47,6 @@ export const LoginResponse = {
       },
       required: ["id", "firstName", "lastName", "email", "token", "sessionId"],
     },
-    statusCode: { type: "number" },
   },
 };
 
@@ -79,6 +78,5 @@ export const RegisterResponse = {
       },
       required: ["id", "email", "firstName", "lastName"],
     },
-    statusCode: { type: "number" },
   },
 };
