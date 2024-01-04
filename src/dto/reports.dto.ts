@@ -7,7 +7,7 @@ const LocationSchema = {
     name: { type: "string" },
     description: { type: "string" },
     resolved: { type: "boolean" },
-    images: { type: "array", items: { type: "string" } },
+    images: { type: "array", items: { format: "binary" } },
     localitate: { type: "string" },
     authorId: { type: "number" },
     createdAt: { type: "string", format: "date" },

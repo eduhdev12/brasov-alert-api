@@ -33,6 +33,7 @@
     "date-fns": "^3.0.6",
     "dotenv": "^16.3.1",
     "fastify": "^4.24.3",
+    "fastify-multer": "^2.0.3",
     "nodemailer": "^6.9.7",
     "prisma": "^5.6.0"
   }

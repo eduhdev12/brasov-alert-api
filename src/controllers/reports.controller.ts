@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import multer from "fastify-multer";
 import { AuthorizedRoute } from "../dto/auth.dto";
 import {
   IManipulateReport,
@@ -7,6 +8,8 @@ import {
   TouchedReport,
 } from "../dto/reports.dto";
 import Controller, { ErrorResponse, Methods } from "../types/controller.type";
+
+const upload = multer({ dest: "uploads/" });
 
 export default class ReportsController extends Controller {
   public path = "/reports";
@@ -43,9 +46,11 @@ export default class ReportsController extends Controller {
       path: "/new",
       method: Methods.POST,
       handler: this.createReport.bind(this),
+      preValidation: upload.array("images", 5) as any,
       onRequest: [global.server.app.authenticate],
       schema: {
         tags: ["reports"],
+        consumes: ["multipart/form-data"],
         body: ManipulateReport,
         response: {
           200: TouchedReport,
@@ -114,8 +119,15 @@ export default class ReportsController extends Controller {
     reply: FastifyReply
   ) {
     try {
+      // @ts-ignore: The fastify plugin doesn't have the types
+      const uploadedFiles = req?.files?.map((file) => file.filename) || [];
+
       const newReport = await global.database.report.create({
-        data: { ...req.body, author: { connect: { id: req.user.id } } },
+        data: {
+          ...req.body,
+          author: { connect: { id: req.user.id } },
+          images: uploadedFiles,
+        },
       });
 
       return this.sendSuccess(reply, newReport, "Report created");
@@ -134,7 +146,7 @@ export default class ReportsController extends Controller {
     reply: FastifyReply
   ) {
     const { reportId } = req.params;
-    const reportData = req.body;
+    const { images, ...reportData } = req.body;
 
     try {
       const editedReport = await global.database.report.update({

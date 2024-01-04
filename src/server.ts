@@ -15,6 +15,7 @@ import ReportsController from "./controllers/reports.controller";
 import Controller from "./types/controller.type";
 import { IUser } from "./types/userJWT.type";
 import { isAfter } from "date-fns";
+import multer from "fastify-multer";
 
 export const swaggerOptions = {
   swagger: {
@@ -135,6 +136,7 @@ export const createServer = () => {
     secret: "supersecret",
   });
   app.register(require("@fastify/auth"), { defaultRelation: "and" });
+  app.register(multer.contentParser);
 
   app.decorate(
     "authenticate",
