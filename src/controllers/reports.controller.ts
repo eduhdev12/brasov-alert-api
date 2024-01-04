@@ -110,6 +110,7 @@ export default class ReportsController extends Controller {
 
     const reports = await global.database.report.findMany({
       where: { localitate: userDetails.localitate },
+      orderBy: { createdAt: "desc" },
     });
 
     return this.sendSuccess(reply, reports);
@@ -118,6 +119,7 @@ export default class ReportsController extends Controller {
   private async getUserReports(req: FastifyRequest, reply: FastifyReply) {
     const reports = await global.database.report.findMany({
       where: { authorId: req.user.id },
+      orderBy: { createdAt: "desc" },
     });
 
     if (reports.length === 0) return this.sendError(reply, "No reports found");
