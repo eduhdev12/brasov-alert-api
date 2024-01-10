@@ -25,6 +25,22 @@ const LocationSchema = {
   ],
 };
 
+const LocationWithUserSchema = {
+  ...LocationSchema,
+  properties: {
+    ...LocationSchema.properties,
+    author: {
+      type: "object",
+      properties: {
+        id: { type: "number" },
+        firstName: { type: "string" },
+        lastName: { type: "string" },
+        email: { type: "string" },
+      },
+    },
+  },
+};
+
 export const ManipulateReport = {
   type: "object",
   properties: {
@@ -52,6 +68,18 @@ export const LocationReportsResponse = {
     data: {
       type: "array",
       items: LocationSchema,
+    },
+  },
+  required: ["data"],
+};
+
+export const LocationReportsWithUserResponse = {
+  type: "object",
+  properties: {
+    message: { type: "string" },
+    data: {
+      type: "array",
+      items: LocationWithUserSchema,
     },
   },
   required: ["data"],

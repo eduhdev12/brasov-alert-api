@@ -4,6 +4,7 @@ import { AuthorizedRoute } from "../dto/auth.dto";
 import {
   IManipulateReport,
   LocationReportsResponse,
+  LocationReportsWithUserResponse,
   ManipulateReport,
   TouchedReport,
 } from "../dto/reports.dto";
@@ -22,7 +23,7 @@ export default class ReportsController extends Controller {
       schema: {
         tags: ["reports"],
         response: {
-          200: LocationReportsResponse,
+          200: LocationReportsWithUserResponse,
           500: ErrorResponse,
         },
         ...AuthorizedRoute,
@@ -110,6 +111,11 @@ export default class ReportsController extends Controller {
 
     const reports = await global.database.report.findMany({
       where: { localitate: userDetails.localitate },
+      include: {
+        author: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
 
