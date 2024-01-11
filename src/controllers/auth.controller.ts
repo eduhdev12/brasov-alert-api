@@ -111,7 +111,14 @@ export default class AuthController extends Controller {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newRegisteredUser = await global.database.user.create({
-      data: { firstName, lastName, email, password: hashedPassword },
+      // We are currently focring the localitate
+      data: {
+        firstName,
+        lastName,
+        email,
+        password: hashedPassword,
+        localitate: "BRASOV",
+      },
       select: {
         id: true,
         email: true,
